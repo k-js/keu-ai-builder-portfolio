@@ -1,37 +1,29 @@
-# Keu Araújo · AI Builder Portfolio
+# Keu Araújo · Portfólio profissional
 
-Portfólio pessoal responsivo, desenvolvido em Next.js, React e TypeScript. A homepage contém o case **INOVA Automation (UFPR)** com uma demonstração interativa e pública da arquitetura — sem executar rotinas ou expor credenciais institucionais.
+Portfólio em Next.js App Router, React e TypeScript, com Tailwind CSS e Motion. O case principal apresenta a automação do projeto de extensão Inovação e Desenvolvimento Territorial da UFPR.
 
-## Rodar localmente
+## Desenvolvimento local
 
-Requisitos: Node.js 20.9+ e npm.
+Use Node.js 20.9 ou mais recente e npm.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Abra http://localhost:3000.
+Acesse [localhost:3000](http://localhost:3000). O explorador usa exemplos fictícios em memória e funciona sem configuração de serviços ou variáveis de ambiente.
 
 ## Verificações
 
 ```bash
+npm run lint
 npm run typecheck
 npm run build
 ```
 
-## Conteúdo
+## Referências
 
-- `app/page.tsx` — homepage e demais seções
-- `app/globals.css` — estilos e responsividade
-- `components/ArchitectureExplorer.tsx` — explorador interativo por etapas
-- `lib/inova.ts` — dados das etapas e textos técnicos
-- `docs/` — decisões e próximos passos
-
-## Importante
-
-- A interface **não** monitora o sistema institucional em tempo real.
-- Efeitos demonstrativos são visuais e não executam a automação.
-- Informações sobre desempenho e tempo economizado ainda dependem de medição verificável.
-- Imagens de pessoas geradas por IA não foram utilizadas como fotos reais.
-- Previsões de formatura não são exibidas porque o mês/ano antecipado ainda precisa ser definido com precisão.
+- [Arquitetura e auditoria do código do INOVA](docs/architecture.md)
+- [Design system](docs/design-system.md)
+- [Repositório INOVA Automation](https://github.com/k-js/INOVA-AUTOMACAO)
+- [Site INOVA UFPR](https://inova.ufpr.br/)
