@@ -1,11 +1,80 @@
-export type NodeId = 'sheets'|'apps'|'actions'|'python'|'groq'|'vision'|'wordpress';
-export type WorkflowStage = {id: NodeId; name:string; label:string; description:string; technologies:string[]; category:'data'|'orchestration'|'language'|'vision'|'delivery'};
-export const stages:WorkflowStage[] = [
-  {id:'sheets',name:'Google Sheets',label:'Fonte de dados',description:'Planilhas com informações e sinalização de quais páginas precisam de inclusão, edição ou remoção.',technologies:['Google Sheets API','gspread'],category:'data'},
-  {id:'apps',name:'Google Apps Script',label:'Sinalização e controle',description:'Scripts na planilha organizam alterações e sinalizam pendências para o pipeline.',technologies:['JavaScript','Apps Script'],category:'orchestration'},
-  {id:'actions',name:'GitHub Actions',label:'Execução agendada',description:'Workflows iniciam tarefas automáticas com controle de permissões, cache e backups.',technologies:['GitHub Actions','YAML'],category:'orchestration'},
-  {id:'python',name:'Python',label:'Orquestração',description:'Scripts fazem a leitura, validação, composição de conteúdo e integração com serviços externos.',technologies:['Python 3.11','pandas','requests'],category:'orchestration'},
-  {id:'groq',name:'Groq · GPT-OSS',label:'Processamento de linguagem',description:'O modelo cria descrições apoiadas nas categorias das tabelas, gera termos de busca e auxilia a redação de textos alternativos.',technologies:['Groq API','gpt-oss-120b'],category:'language'},
-  {id:'vision',name:'CLIP · BLIP · NSFW',label:'Visão computacional',description:'O pipeline avalia imagens candidatas com verificações leves, filtros de segurança e similaridade; BLIP também descreve imagens existentes sem texto alternativo. As etapas são condicionais, não uma cadeia única.',technologies:['Pillow','CLIP','BLIP','Falconsai','CPU'],category:'vision'},
-  {id:'wordpress',name:'WordPress REST API',label:'Publicação',description:'Páginas, mídias e elementos do site são atualizados via API, com etapas de verificação e salvaguardas.',technologies:['WordPress API','Gutenberg'],category:'delivery'},
+export const stages = {
+  sheets: {
+    name: 'Google Sheets',
+    role: 'Origem dos dados',
+    description: 'A equipe marca STATUS nas linhas que precisam de inclusão, edição ou remoção.',
+    example: 'Exemplo fictício: uma organização de tecnologia educacional recebe o status EDITAR.',
+  },
+  apps: {
+    name: 'Apps Script',
+    role: 'Triagem de pendências',
+    description: 'O script verifica os valores de STATUS e registra na aba CHECAR ABAS os nomes das abas com pendências.',
+    example: 'A aba fictícia Educação aparece na lista de abas a republicar.',
+  },
+  actions: {
+    name: 'GitHub Actions',
+    role: 'Execução dos workflows',
+    description: 'O workflow de atualização pode rodar por agendamento ou disparo manual. A execução salva o conteúdo atual das páginas antes de atualizá-las.',
+    example: 'O workflow prepara um backup da página fictícia Educação.',
+  },
+  python: {
+    name: 'Python',
+    role: 'Leitura e composição',
+    description: 'O orquestrador lê as abas selecionadas e gera o HTML das tabelas com os filtros previstos para cada página.',
+    example: 'As linhas fictícias viram uma tabela filtrável por cidade e categoria.',
+  },
+  groq: {
+    name: 'Groq · GPT-OSS',
+    role: 'Geração de texto',
+    description: 'O modelo padrão openai/gpt-oss-120b escreve descrições ancoradas nas categorias da aba, sugere buscas para capas e reescreve legendas em português para texto alternativo.',
+    example: 'A categoria fictícia Plataformas de ensino orienta a descrição da página.',
+  },
+  nsfw: {
+    name: 'Classificador NSFW',
+    role: 'Filtro de conteúdo',
+    description: 'Após uma verificação de saturação por pixels, o modelo Falconsai/nsfw_image_detection filtra imagens candidatas com conteúdo impróprio.',
+    example: 'Uma candidata fictícia reprovada sai da seleção antes da análise com CLIP.',
+  },
+  clip: {
+    name: 'CLIP',
+    role: 'Relevância e ordenação',
+    description: 'O CLIP verifica a relevância temática e ajuda a ordenar as imagens aprovadas por similaridade. Imagens com pessoa em destaque são colocadas no fim da fila.',
+    example: 'Uma foto fictícia de materiais didáticos é comparada ao tema Educação.',
+  },
+  blip: {
+    name: 'BLIP',
+    role: 'Legenda para capa existente',
+    description: 'No modo --legendar, o BLIP descreve a imagem já recortada e publicada quando ela precisa de texto alternativo. O modelo de linguagem transforma a legenda em alt em português.',
+    example: 'Para uma capa fictícia já publicada, o BLIP descreve um caderno e um lápis sobre uma mesa.',
+  },
+  wordpress: {
+    name: 'WordPress REST API',
+    role: 'Páginas e mídia',
+    description: 'As rotinas atualizam as páginas e a biblioteca de mídia do site institucional por meio da API.',
+    example: 'Na demonstração, a página fictícia recebe o HTML ou o texto alternativo produzido no caminho selecionado.',
+  },
+} as const;
+
+export type StageId = keyof typeof stages;
+
+type Flow = { name: string; description: string; steps: readonly StageId[]; related?: readonly StageId[] };
+
+export const flows: readonly Flow[] = [
+  {
+    name: 'Atualização de páginas',
+    description: 'Da sinalização na planilha à republicação das tabelas.',
+    steps: ['sheets', 'apps', 'actions', 'python', 'wordpress'],
+    related: ['groq'],
+  },
+  {
+    name: 'Seleção de capa',
+    description: 'Após buscar candidatas no Pexels e checar a saturação, o workflow filtra, ordena, recorta e envia a capa escolhida. O alt vem da legenda do Pexels, reescrita em português.',
+    steps: ['nsfw', 'clip', 'wordpress'],
+    related: ['groq'],
+  },
+  {
+    name: 'Legenda de capa existente',
+    description: 'A rotina de legendagem descreve a capa existente, prepara o texto em português e grava o alt no WordPress.',
+    steps: ['blip', 'groq', 'wordpress'],
+  },
 ];
