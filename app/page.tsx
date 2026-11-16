@@ -1,5 +1,7 @@
-import { ArrowDown, ArrowUpRight, BrainCircuit, Github, Workflow } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, Github, Workflow } from 'lucide-react';
 import ArchitectureExplorer from '@/components/ArchitectureExplorer';
+import CareerProfile from '@/components/CareerProfile';
+import ProjectSpotlight from '@/components/ProjectSpotlight';
 import { ActionLink, Tag } from '@/components/ui';
 
 const github = 'https://github.com/k-js';
@@ -36,14 +38,13 @@ export default function Home() {
               <ActionLink href="#sobre">Minha trajetória</ActionLink>
             </div>
           </div>
-          <div className="hero-visual" aria-hidden="true">
-            <div className="visual-grid" />
-            <div className="orbit orbit-outer" />
-            <div className="orbit orbit-inner" />
-            <div className="visual-core"><BrainCircuit size={56} strokeWidth={1.15} /></div>
-            <span className="visual-label visual-label-top">Automation</span>
-            <span className="visual-label visual-label-bottom">AI systems</span>
-          </div>
+          <ProjectSpotlight
+            projects={[
+              { name: 'INOVA Automation', area: 'Automação', description: 'Da sinalização no Google Sheets à publicação de páginas no WordPress.', href: '#case-title' },
+              { ...projects[1], area: 'Dados' },
+              { ...projects[2], area: 'Software' },
+            ]}
+          />
           <a className="hero-scroll label" href="#projetos"><ArrowDown size={16} aria-hidden="true" /> Projetos selecionados</a>
         </section>
 
@@ -103,17 +104,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="shell section about" id="sobre" aria-labelledby="about-title">
-          <div>
-            <h2 id="about-title">Sobre <em>mim.</em></h2>
-            <p>Minha trajetória reúne desenvolvimento de software, Economia e pesquisa aplicada. No INOVA UFPR, atuo na manutenção e evolução da automação que conecta a planilha da equipe ao site institucional.</p>
-          </div>
-          <div className="about-list">
-            <div><h3>Análise e Desenvolvimento de Sistemas</h3><p>UNIFESO</p></div>
-            <div><h3>Ciências Econômicas</h3><p>Universidade Federal do Paraná</p></div>
-            <div><h3>Desenvolvimento e inovação</h3><p>Aceleradora Ágil (PUCRS) · Pesquisa e extensão na UFPR</p></div>
-          </div>
-        </section>
+        <CareerProfile />
       </main>
       <footer className="site-footer">
         <div className="shell footer-content">
