@@ -11,8 +11,12 @@ const icons = {
 };
 
 export default function ArchitectureExplorer() {
-  const [flowIndex, setFlowIndex] = useState(0);
-  const [active, setActive] = useState<StageId>('sheets');
+  const [selection, setSelection] = useState<{
+    flowIndex: number;
+    stage: StageId;
+  } | null>(null);
+  const flowIndex = selection?.flowIndex ?? 0;
+  const active = selection?.stage ?? flows[flowIndex].steps[0];
   const reduceMotion = useReducedMotion();
   const flow = flows[flowIndex];
   const stage = stages[active];
@@ -21,7 +25,7 @@ export default function ArchitectureExplorer() {
     const Icon = icons[id];
     return (
       <button type="button" className="stage-button" aria-pressed={active === id}
-        aria-controls="stage-details" onClick={() => setActive(id)}>
+        aria-controls="stage-details" onClick={() => setSelection({ flowIndex, stage: id })}>
         <Icon size={19} aria-hidden="true" />
         <span>{stages[id].name}</span>
       </button>
@@ -37,7 +41,7 @@ export default function ArchitectureExplorer() {
       <div className="flex flex-wrap gap-2" role="group" aria-label="Caminhos da arquitetura">
         {flows.map(({ name, steps }, index) => (
           <button key={name} type="button" className="flow-button" aria-pressed={flowIndex === index}
-            onClick={() => { setFlowIndex(index); setActive(steps[0]); }}>
+            onClick={() => setSelection({ flowIndex: index, stage: steps[0] })}>
             {name}
           </button>
         ))}
@@ -61,7 +65,7 @@ export default function ArchitectureExplorer() {
         </div>
       )}
       <div id="stage-details" className="stage-details" aria-live="polite" aria-atomic="true">
-        <motion.div key={flowIndex + active} initial={reduceMotion ? false : { opacity: 0, y: 5 }}
+        <motion.div key={flowIndex + active} initial={!selection || reduceMotion ? false : { opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.18 }}>
           <div className="label text-coral">{stage.role}</div>
           <h4>{stage.name}</h4>
